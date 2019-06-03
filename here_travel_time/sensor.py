@@ -19,9 +19,9 @@ from homeassistant.helpers import location
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 
-import herepy
-
 _LOGGER = logging.getLogger(__name__)
+
+REQUIREMENTS = [ "herepy==0.5.0" ]
 
 CONF_DESTINATION = "destination"
 CONF_ORIGIN = "origin"
@@ -105,6 +105,7 @@ def setup_platform(hass, config, add_entities_callback, discovery_info=None):
 
 
 class HERETravelTimeSensor(Entity):
+    import herepy
     """Representation of a HERE travel time sensor."""
 
     def __init__(
