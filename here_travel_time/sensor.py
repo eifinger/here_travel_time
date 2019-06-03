@@ -21,8 +21,6 @@ from homeassistant.util import Throttle
 
 _LOGGER = logging.getLogger(__name__)
 
-REQUIREMENTS = [ "herepy==0.5.0" ]
-
 CONF_DESTINATION = "destination"
 CONF_ORIGIN = "origin"
 CONF_APP_ID = "app_id"
@@ -72,28 +70,36 @@ def convert_time_to_utc(timestr):
     return dt_util.as_timestamp(combined)
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
+def setup_platform(hass, config, add_entities_callback, discovery_info=None):
     """Set up the HERE travel time platform."""
-    hass.data.setdefault(DATA_KEY, [])
 
-    travel_mode = config.get(CONF_MODE)
-    traffic_mode = config.get(CONF_TRAFFIC_MODE)
+    def run_setup(event):
+        """
+        Delay the setup until Home Assistant is fully initialized.
 
-    name = config.get(CONF_NAME, DEFAULT_NAME)
-    app_id = config.get(CONF_APP_ID)
-    app_code = config.get(CONF_APP_CODE)
-    origin = config.get(CONF_ORIGIN)
-    destination = config.get(CONF_DESTINATION)
+        This allows any entities to be created already
+        """
+        hass.data.setdefault(DATA_KEY, [])
 
-    sensor = HERETravelTimeSensor(
-        hass, name, app_id, app_code, origin, destination, travel_mode, traffic_mode
-    )
-    hass.data[DATA_KEY].append(sensor)
+        travel_mode = config.get(CONF_MODE)
+        traffic_mode = config.get(CONF_TRAFFIC_MODE)
 
-    add_entities([sensor])
+        name = config.get(CONF_NAME, DEFAULT_NAME)
+        app_id = config.get(CONF_APP_ID)
+        app_code = config.get(CONF_APP_CODE)
+        origin = config.get(CONF_ORIGIN)
+        destination = config.get(CONF_DESTINATION)
 
-    hass.bus.listen_once(
-        EVENT_HOMEASSISTANT_START, lambda _: sensor.update())
+        sensor = HERETravelTimeSensor(
+            hass, name, app_id, app_code, origin, destination, travel_mode, traffic_mode
+        )
+        hass.data[DATA_KEY].append(sensor)
+
+        if sensor.valid_api_connection:
+            add_entities_callback([sensor])
+
+    # Wait until start event is sent to load this component.
+    hass.bus.listen_once(EVENT_HOMEASSISTANT_START, run_setup)
 
 
 class HERETravelTimeSensor(Entity):
