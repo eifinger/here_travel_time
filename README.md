@@ -6,7 +6,7 @@ Homeassistant Custom Component for Travel Time using the HERE API
 
 ```yaml
 sensor:
-  - platform: here_travel-time
+  - platform: here_travel_time
     name: Travel Time
     app_id: "secret"
     app_code: "secret"
