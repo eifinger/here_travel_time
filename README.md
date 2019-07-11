@@ -142,6 +142,8 @@ automation:
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
+<a href="https://www.buymeacoffee.com/eifinger" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/black_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a><br>
+
 ***
 
 [buymecoffee]: https://www.buymeacoffee.com/eifinger
