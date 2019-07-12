@@ -22,6 +22,12 @@ Platform | Description
 
 ## Installation
 
+### HACS
+
+The easiest way to add this to your Homeassistant installation is using [HACS](https://custom-components.github.io/hacs/) and add this repository as a custom repository.
+
+### Manual
+
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
 3. In the `custom_components` directory (folder) create a new folder called `here_travel_time`.
