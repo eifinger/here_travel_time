@@ -68,7 +68,7 @@ Key | Type | Required | Description
 `origin` | `string` | `true` | The starting point for calculating travel distance and time.
 `destination` | `string` | `true` | The finishing point for calculating travel distance and time.
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
-`travel_mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
+`mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
 `route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`
 `traffic_mode` | `string` | `false` | You can choose between: `true`, or `false`. Decide whether you want to take the current traffic condition into account. Default is `false`.
 
