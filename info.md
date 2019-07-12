@@ -127,7 +127,7 @@ automation:
 [commits]: https://github.com/eifinger/here_travel_time/commits/master
 [customupdater]: https://github.com/custom-components/custom_updater
 [customupdaterbadge]: https://img.shields.io/badge/custom__updater-true-success.svg?style=for-the-badge
-[exampleimg]: example.PNG
+[exampleimg]: https://github.com/eifinger/here_travel_time/blob/master/example.PNG?raw=true
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/
 [license-shield]: https://img.shields.io/github/license/eifinger/here_travel_time.svg?style=for-the-badge
