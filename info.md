@@ -1,3 +1,23 @@
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+[![License][license-shield]](LICENSE.md)
+
+![Project Maintenance][maintenance-shield]
+[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
+
+[![Community Forum][forum-shield]][forum]
+
+_Homeassistant Custom Component sensor provides travel time from the [HERE Routing API](https://developer.here.com/documentation/routing/topics/introduction.html)._
+
+**This component will set up the following platforms.**
+
+Platform | Description
+-- | --
+`sensor` | Show travel time between two places.
+
+![example][exampleimg]
+
 ## Setup
 
 You need to register for an API key by following the instructions [here](https://developer.here.com/documentation/routing/topics/introduction.html?create=Freemium-Basic&keepState=true&step=account).
@@ -100,3 +120,17 @@ automation:
 ```
 
 <a href="https://www.buymeacoffee.com/eifinger" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/black_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a><br>
+
+[buymecoffee]: https://www.buymeacoffee.com/eifinger
+[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/blueprint.svg?style=for-the-badge
+[commits]: https://github.com/eifinger/here_travel_time/commits/master
+[customupdater]: https://github.com/custom-components/custom_updater
+[customupdaterbadge]: https://img.shields.io/badge/custom__updater-true-success.svg?style=for-the-badge
+[exampleimg]: example.PNG
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
+[forum]: https://community.home-assistant.io/
+[license-shield]: https://img.shields.io/github/license/eifinger/here_travel_time.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Kevin%20Eifinger%20%40eifinger-blue.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/eifinger/here_travel_time.svg?style=for-the-badge
+[releases]: https://github.com/eifinger/here_travel_time/releases
