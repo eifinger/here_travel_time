@@ -160,7 +160,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [customupdaterbadge]: https://img.shields.io/badge/custom__updater-true-success.svg?style=for-the-badge
 [exampleimg]: example.PNG
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
+[forum]: https://community.home-assistant.io/t/custom-component-here-travel-time/125908
 [license-shield]: https://img.shields.io/github/license/eifinger/here_travel_time.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Kevin%20Eifinger%20%40eifinger-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/eifinger/here_travel_time.svg?style=for-the-badge
