@@ -164,11 +164,11 @@ class HERETravelTimeSensor(Entity):
 
         res = {}
         res[ATTR_ATTRIBUTION] = self._here_data.attribution
-        res[ATTR_DURATION] = self._here_data.duration
+        res[ATTR_DURATION] = self._here_data.duration / 60
         res[ATTR_DISTANCE] = self._here_data.distance
         res[ATTR_ROUTE] = self._here_data.route
         res[CONF_UNIT_SYSTEM] = self._here_data.units
-        res['duration_without_traffic'] = self._here_data.base_time
+        res['duration_without_traffic'] = self._here_data.base_time / 60
         res['origin_name'] = self._here_data.origin_name
         res['destination_name'] = self._here_data.destination_name
         res[CONF_MODE] = self._here_data.travel_mode
