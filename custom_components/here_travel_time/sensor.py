@@ -284,13 +284,13 @@ class HERETravelTimeData():
         else:
             traffic_mode = TRAFFIC_MODE_DISABLED
 
-        # Convert location to HERE friendly location if not already so
-        if not isinstance(self.destination, list):
-            self.destination = self.destination.split(',')
-        if not isinstance(self.origin, list):
-            self.origin = self.origin.split(',')
-
         if self.destination is not None and self.origin is not None:
+            # Convert location to HERE friendly location if not already so
+            if not isinstance(self.destination, list):
+                self.destination = self.destination.split(',')
+            if not isinstance(self.origin, list):
+                self.origin = self.origin.split(',')
+
             response = self._client.car_route(
                 self.origin,
                 self.destination,
