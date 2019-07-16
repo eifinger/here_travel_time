@@ -54,6 +54,13 @@ ATTR_DURATION = 'duration'
 ATTR_DISTANCE = 'distance'
 ATTR_ROUTE = 'route'
 
+SCAN_INTERVAL = timedelta(minutes=5)
+
+TRACKABLE_DOMAINS = ['device_tracker', 'sensor', 'zone', 'person']
+DATA_KEY = 'here_travel_time'
+
+NO_ROUTE_ERROR_MESSAGE = "HERE could not find a route based on the input"
+
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_APP_ID): cv.string,
@@ -69,11 +76,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_UNIT_SYSTEM): vol.In(UNITS),
     }
 )
-
-TRACKABLE_DOMAINS = ['device_tracker', 'sensor', 'zone', 'person']
-DATA_KEY = 'here_travel_time'
-
-NO_ROUTE_ERROR_MESSAGE = "HERE could not find a route based on the input"
 
 
 def convert_time_to_utc(timestr):
