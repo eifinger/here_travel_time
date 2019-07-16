@@ -1,6 +1,7 @@
 """Support for HERE travel time sensors."""
 from datetime import datetime, timedelta
 import logging
+import re
 
 import herepy
 import voluptuous as vol
@@ -285,6 +286,18 @@ class HERETravelTimeData():
             traffic_mode = TRAFFIC_MODE_DISABLED
 
         if self.destination is not None and self.origin is not None:
+            # Check for correct pattern
+            pattern = r"-?\d{1,2}\.\d+,-?\d{1,2}\.\d+"
+            if not re.fullmatch(pattern, self.origin):
+                _LOGGER.error(
+                    "Origin has the wrong format: %s", self.origin
+                )
+                return
+            if not re.fullmatch(pattern, self.destination):
+                _LOGGER.error(
+                    "Destination has the wrong format: %s", self.destination
+                )
+                return
             # Convert location to HERE friendly location if not already so
             if not isinstance(self.destination, list):
                 self.destination = self.destination.split(',')
