@@ -287,7 +287,7 @@ class HERETravelTimeData():
 
         if self.destination is not None and self.origin is not None:
             # Check for correct pattern
-            pattern = r"-?\d{1,2}\.\d+,-?\d{1,2}\.\d+"
+            pattern = r"-?\d{1,2}\.\d+,-?\d{1,3}\.\d+"
             if not re.fullmatch(pattern, self.origin):
                 _LOGGER.error(
                     "Origin has the wrong format: %s", self.origin
