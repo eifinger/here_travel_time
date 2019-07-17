@@ -302,15 +302,14 @@ class HERETravelTimeData():
                     "Destination has the wrong format: %s", self.destination
                 )
                 return
-            # Convert location to HERE friendly location if not already so
-            if not isinstance(self.destination, list):
-                self.destination = self.destination.split(',')
-            if not isinstance(self.origin, list):
-                self.origin = self.origin.split(',')
+
+            # Convert location to HERE friendly location
+            destination = self.destination.split(',')
+            origin = self.origin.split(',')
 
             response = self._client.car_route(
-                self.origin,
-                self.destination,
+                origin,
+                destination,
                 [self.travel_mode, self.route_mode, traffic_mode],
             )
             if isinstance(response, herepy.error.HEREError):
