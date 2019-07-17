@@ -22,6 +22,12 @@ Platform | Description
 
 ## Installation
 
+### HACS
+
+The easiest way to add this to your Homeassistant installation is using [HACS](https://custom-components.github.io/hacs/) and add this repository as a custom repository.
+
+### Manual
+
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
 3. In the `custom_components` directory (folder) create a new folder called `here_travel_time`.
@@ -68,9 +74,11 @@ Key | Type | Required | Description
 `origin` | `string` | `true` | The starting point for calculating travel distance and time.
 `destination` | `string` | `true` | The finishing point for calculating travel distance and time.
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
-`travel_mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
+`mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
 `route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`
 `traffic_mode` | `string` | `false` | You can choose between: `true`, or `false`. Decide whether you want to take the current traffic condition into account. Default is `false`.
+`unit_system` | `string` | `false` | You can choose between `metric` or `imperial`. Defaults to `metric` or `imperial` based on the Home Assistant configuration.
+`scan_interval` | `integer` | `false` | "Defines the update interval of the sensor in seconds. Defaults to 300 (5 minutes)."
 
 
 ## Dynamic Configuration 
@@ -154,7 +162,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [customupdaterbadge]: https://img.shields.io/badge/custom__updater-true-success.svg?style=for-the-badge
 [exampleimg]: example.PNG
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
+[forum]: https://community.home-assistant.io/t/custom-component-here-travel-time/125908
 [license-shield]: https://img.shields.io/github/license/eifinger/here_travel_time.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Kevin%20Eifinger%20%40eifinger-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/eifinger/here_travel_time.svg?style=for-the-badge
