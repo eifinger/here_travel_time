@@ -1,3 +1,15 @@
+{% if prerelease %}
+# This is a Beta version!
+{% endif %}
+
+# Important information for hass.io users on > 0.96.0
+
+If you are using hass.io in a version later than 0.96.0 you have to restart twice in order for this component to work.
+
+This is a known problem for some custom_components and will hopefully be fixed soon
+
+---
+
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)

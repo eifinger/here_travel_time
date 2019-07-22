@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import logging
 import re
 
+import herepy
 import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
@@ -272,7 +273,6 @@ class HERETravelTimeData():
     def __init__(self, origin, destination, app_id, app_code, travel_mode,
                  traffic_mode, route_mode, units):
         """Initialize herepy."""
-        import herepy
         self.origin = origin
         self.destination = destination
         self.travel_mode = travel_mode
@@ -290,7 +290,6 @@ class HERETravelTimeData():
 
     def update(self):
         """Get the latest data from HERE."""
-        import herepy
         if self.traffic_mode:
             traffic_mode = TRAFFIC_MODE_ENABLED
         else:
@@ -384,7 +383,6 @@ class HERETravelTimeData():
         """Extract Waze-like route info from the public transport lines."""
         lines = []
         for line_info in public_transport_line_segment:
-            print(line_info)
             lines.append(
                 line_info['lineName'] + " - " + line_info['destination'])
 

@@ -22,6 +22,12 @@ Platform | Description
 
 ## Installation
 
+### Important information for hass.io users on > 0.96.0
+
+If you are using hass.io in a version later than 0.96.0 you have to restart twice in order for this component to work.
+
+This is a known problem for some custom_components and will hopefully be fixed soon
+
 ### HACS
 
 The easiest way to add this to your Homeassistant installation is using [HACS](https://custom-components.github.io/hacs/) and add this repository as a custom repository.
