@@ -14,13 +14,19 @@ Issues not containing the minimum requirements will be closed:
 
 -->
 
+
 ## Version of the custom_component
 <!-- If you are not using the newest version, download and try that before opening an issue
 -->
 
+
 ## Installation method (hacs / manual)
 
-## Installation mehtod of hass (venv, docker, hassio,...)
+
+
+## Installation method of hass (venv, docker, hassio,...)
+
+
 
 ## Configuration
 
@@ -31,8 +37,8 @@ Add your configuration here.
 ```
 
 ## Describe the bug
-A clear and concise description of what the bug is.
 
+A clear and concise description of what the bug is.
 
 ## Debug log
 
