@@ -20,6 +20,8 @@ Issues not containing the minimum requirements will be closed:
 
 ## Installation method (hacs / manual)
 
+## Installation mehtod of hass (venv, docker, hassio,...)
+
 ## Configuration
 
 ```yaml
