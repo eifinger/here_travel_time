@@ -39,7 +39,7 @@ The easiest way to add this to your Homeassistant installation is using [HACS](h
 3. In the `custom_components` directory (folder) create a new folder called `here_travel_time`.
 4. Download _all_ the files from the `custom_components/here_travel_time/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
-6. Add `here_travel_time:` to your HA configuration.
+6. Add here_travel_time to your HA configuration. (See [Configuration](#configuration) below)
 
 Using your HA configuration directory (folder) as a starting point you should now also have this:
 
