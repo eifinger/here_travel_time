@@ -18,11 +18,13 @@ Issues not containing the minimum requirements will be closed:
 <!-- If you are not using the newest version, download and try that before opening an issue
 -->
 
+## Installation method (hacs / manual)
+
 ## Configuration
 
 ```yaml
 
-Add your logs here.
+Add your configuration here.
 
 ```
 
