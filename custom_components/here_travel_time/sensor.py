@@ -54,6 +54,12 @@ ATTR_DURATION = 'duration'
 ATTR_DISTANCE = 'distance'
 ATTR_ROUTE = 'route'
 
+ATTR_DURATION_WITHOUT_TRAFFIC = 'duration_without_traffic'
+ATTR_ORIGIN_NAME = 'origin_name'
+ATTR_DESTINATION_NAME = 'destination_name'
+
+UNIT_OF_MEASUREMENT = 'min'
+
 SCAN_INTERVAL = timedelta(minutes=5)
 
 TRACKABLE_DOMAINS = ['device_tracker', 'sensor', 'zone', 'person']
@@ -132,7 +138,7 @@ class HERETravelTimeSensor(Entity):
         self._hass = hass
         self._name = name
         self._here_data = here_data
-        self._unit_of_measurement = 'min'
+        self._unit_of_measurement = UNIT_OF_MEASUREMENT
         self._origin_entity_id = None
         self._destination_entity_id = None
 
@@ -172,9 +178,9 @@ class HERETravelTimeSensor(Entity):
         res[ATTR_DISTANCE] = self._here_data.distance
         res[ATTR_ROUTE] = self._here_data.route
         res[CONF_UNIT_SYSTEM] = self._here_data.units
-        res['duration_without_traffic'] = self._here_data.base_time / 60
-        res['origin_name'] = self._here_data.origin_name
-        res['destination_name'] = self._here_data.destination_name
+        res[ATTR_DURATION_WITHOUT_TRAFFIC] = self._here_data.base_time / 60
+        res[ATTR_ORIGIN_NAME] = self._here_data.origin_name
+        res[ATTR_DESTINATION_NAME] = self._here_data.destination_name
         res[CONF_MODE] = self._here_data.travel_mode
         res[CONF_TRAFFIC_MODE] = self._here_data.traffic_mode
         return res
@@ -328,11 +334,7 @@ class HERETravelTimeData():
 
             self.attribution = None
             self.base_time = summary['baseTime']
-            # Check if trafficTime is in response
-            if self.travel_mode in [TRAVEL_MODE_CAR, TRAVEL_MODE_TRUCK]:
-                self.duration = summary['trafficTime']
-            else:
-                self.duration = self.base_time
+            self.duration = summary['travelTime']
             distance = summary['distance']
             if self.units == CONF_UNIT_SYSTEM_IMPERIAL:
                 # Convert to miles.
@@ -340,12 +342,56 @@ class HERETravelTimeData():
             else:
                 # Convert to kilometers
                 self.distance = distance / 1000
-            self.route = self._get_route_from_maneuver(maneuver)
+            if self.travel_mode in [TRAVEL_MODE_CAR, TRAVEL_MODE_TRUCK]:
+                # Get Route for Car and Truck
+                self.route = self._get_route_from_vehicle_maneuver(maneuver)
+            elif self.travel_mode == TRAVEL_MODE_PUBLIC:
+                # Get Route for Public Transport
+                public_transport_line = route[0]['publicTransportLine']
+                self.route = self._get_route_from_publicTransportLine(
+                    public_transport_line)
+            elif self.travel_mode == TRAVEL_MODE_PEDESTRIAN:
+                # Get Route for Pedestrian
+                self.route = self._get_route_from_pedestrian_maneuver(
+                    maneuver)
             self.origin_name = waypoint[0]['mappedRoadName']
             self.destination_name = waypoint[1]['mappedRoadName']
 
     @staticmethod
-    def _get_route_from_maneuver(maneuver):
+    def _get_route_from_pedestrian_maneuver(maneuver):
+        """Extract a Waze-like route from the maneuver instructions."""
+        road_names = []
+
+        for step in maneuver:
+            instruction = step['instruction']
+            try:
+                road_name = instruction.split(
+                    "<span class=\"next-street\">"
+                )[1].split("</span>")[0]
+                road_name = road_name.replace("(", "").replace(")", "")
+
+                # Only add if it does not repeat
+                if not road_names or road_names[-1] != road_name:
+                    road_names.append(road_name)
+            except IndexError:
+                pass  # No street name found in this maneuver step
+        route = "; ".join(list(map(str, road_names)))
+        return route
+
+    @staticmethod
+    def _get_route_from_public_transport_line(public_transport_line_segment):
+        """Extract Waze-like route info from the public transport lines."""
+        lines = []
+        for line_info in public_transport_line_segment:
+            print(line_info)
+            lines.append(
+                line_info['lineName'] + " - " + line_info['destination'])
+
+        route = "; ".join(list(map(str, lines)))
+        return route
+
+    @staticmethod
+    def _get_route_from_vehicle_maneuver(maneuver):
         """Extract a Waze-like route from the maneuver instructions."""
         road_names = []
 
