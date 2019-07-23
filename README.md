@@ -30,7 +30,7 @@ This is a known problem for some custom_components and will hopefully be fixed s
 
 ### HACS
 
-The easiest way to add this to your Homeassistant installation is using [HACS](https://custom-components.github.io/hacs/) and add this repository as a custom repository.
+The easiest way to add this to your Homeassistant installation is using [HACS](https://custom-components.github.io/hacs/) and add this repository as a custom repository. And then follow the instructions under [Configuration](#configuration) below.
 
 ### Manual
 
@@ -39,7 +39,7 @@ The easiest way to add this to your Homeassistant installation is using [HACS](h
 3. In the `custom_components` directory (folder) create a new folder called `here_travel_time`.
 4. Download _all_ the files from the `custom_components/here_travel_time/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
-6. Add here_travel_time to your HA configuration. (See [Configuration](#configuration) below)
+6. Follow the instructions under [Configuration](#configuration) below.
 
 Using your HA configuration directory (folder) as a starting point you should now also have this:
 
@@ -53,9 +53,9 @@ custom_components/here_travel_time/sensor.py
 
 You need to register for an API key by following the instructions [here](https://developer.here.com/documentation/routing/topics/introduction.html?create=Freemium-Basic&keepState=true&step=account).
 
-HERE offers a Freemium Plan which includes 250.000 free Transactions per month. For the Routing API, one transaction equals one request with one starting point (no multistop). More information can be found [here](https://developer.here.com/faqs#payment-subscription)
+HERE offers a Freemium Plan which includes 250.000 free Transactions per month. For the Routing API, one transaction equals one request with one starting point (no multistop). More information can be found [here](https://developer.here.com/faqs#payment-subscription).
 
-By default HERE will deactivate your account if you exceed the free Transaction limit for the month. You can add payment details to reenable your account as described [here](https://developer.here.com/faqs)
+By default HERE will deactivate your account if you exceed the free Transaction limit for the month. You can add payment details to reenable your account as described [here](https://developer.here.com/faqs).
 
 ##  Configuration 
 
@@ -81,10 +81,10 @@ Key | Type | Required | Description
 `destination` | `string` | `true` | The finishing point for calculating travel distance and time.
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
 `mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
-`route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`
+`route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`.
 `traffic_mode` | `string` | `false` | You can choose between: `true`, or `false`. Decide whether you want to take the current traffic condition into account. Default is `false`.
 `unit_system` | `string` | `false` | You can choose between `metric` or `imperial`. Defaults to `metric` or `imperial` based on the Home Assistant configuration.
-`scan_interval` | `integer` | `false` | "Defines the update interval of the sensor in seconds. Defaults to 300 (5 minutes)."
+`scan_interval` | `integer` | `false` | Defines the update interval of the sensor in seconds. Defaults to 300 (5 minutes).
 
 
 ## Dynamic Configuration 
