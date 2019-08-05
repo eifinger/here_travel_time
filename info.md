@@ -2,6 +2,23 @@
 # This is a Beta version!
 {% endif %}
 
+{% if installed %}
+**Changes as compared to your installed version:**
+
+# Breaking Changes
+
+# Changes
+
+# Features
+
+{% if version_installed.replace("v", "").replace(".","") | int < 141  %}
+- Added `mode: bicycle`
+{% endif %}
+
+# Bugfixes
+
+{% endif %}
+
 # Important information for hass.io users on > 0.96.0
 
 If you are using hass.io in a version later than 0.96.0 you have to restart twice in order for this component to work.
@@ -61,7 +78,7 @@ Key | Type | Required | Description
 `origin` | `string` | `true` | The starting point for calculating travel distance and time.
 `destination` | `string` | `true` | The finishing point for calculating travel distance and time.
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
-`mode` | `string` | `false` | You can choose between: `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
+`mode` | `string` | `false` | You can choose between: `bicycle`, `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
 `route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`
 `traffic_mode` | `string` | `false` | You can choose between: `true`, or `false`. Decide whether you want to take the current traffic condition into account. Default is `false`.
 `unit_system` | `string` | `false` | You can choose between `metric` or `imperial`. Defaults to `metric` or `imperial` based on the Home Assistant configuration.
