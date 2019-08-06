@@ -80,7 +80,7 @@ Key | Type | Required | Description
 `origin` | `string` | `true` | The starting point for calculating travel distance and time.
 `destination` | `string` | `true` | The finishing point for calculating travel distance and time.
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
-`mode` | `string` | `false` | You can choose between: `bicycle`, `car`, `pedestrian`, `publicTransport` or `truck`. The default is `car`.
+`mode` | `string` | `false` |You can choose between: `bicycle`, `car`, `pedestrian`, `publicTransport`, `publicTransportTimeTable` or `truck`. The default is `car`. For public transport publicTransportTimetable is recommended. You can find more information on the modes [here](https://developer.here.com/documentation/routing/topics/transport-modes.html) and on the public modes [here](https://developer.here.com/documentation/routing/topics/public-transport-routing.html)
 `route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`.
 `traffic_mode` | `string` | `false` | You can choose between: `true`, or `false`. Decide whether you want to take the current traffic condition into account. Default is `false`.
 `unit_system` | `string` | `false` | You can choose between `metric` or `imperial`. Defaults to `metric` or `imperial` based on the Home Assistant configuration.
