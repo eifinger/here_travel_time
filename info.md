@@ -1,22 +1,23 @@
 {% if prerelease %}
 # This is a Beta version!
+---
 {% endif %}
 
 {% if installed %}
-**Changes as compared to your installed version:**
+# Changes as compared to your installed version:**
 
-# Breaking Changes
+## Breaking Changes
 
-# Changes
+## Changes
 
-# Features
+## Features
 
 {% if version_installed.replace("v", "").replace(".","") | int < 141  %}
 - Added `mode: bicycle`
 - Added `mode: publicTransportTimeTable` - Please look [here](https://developer.here.com/documentation/routing/topics/public-transport-routing.html) for differences between the two public modes.
 {% endif %}
 
-# Bugfixes
+## Bugfixes
 
 {% endif %}
 
