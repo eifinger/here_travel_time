@@ -13,6 +13,7 @@
 
 {% if version_installed.replace("v", "").replace(".","") | int < 141  %}
 - Added `mode: bicycle`
+- Added `mode: publicTransportTimeTable` - Please look [here](https://developer.here.com/documentation/routing/topics/public-transport-routing.html) for differences between the two public modes.
 {% endif %}
 
 # Bugfixes
