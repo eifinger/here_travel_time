@@ -16,9 +16,11 @@
 - Added `mode: bicycle`
 - Added `mode: publicTransportTimeTable` - Please look [here](https://developer.here.com/documentation/routing/topics/public-transport-routing.html) for differences between the two public modes.
 {% endif %}
-
+{% if version_installed.replace("v", "").replace(".","") | int < 142  %}
+- Release notes are shown in HACS depending on your installed version
+{% endif %}
 ## Bugfixes
-
+---
 {% endif %}
 
 # Important information for hass.io users on > 0.96.0
