@@ -1,8 +1,7 @@
 """Support for HERE travel time sensors."""
 from datetime import timedelta
 import logging
-import re
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, Optional, Union, List
 
 import herepy
 import voluptuous as vol
@@ -25,8 +24,12 @@ from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_DESTINATION = "destination"
-CONF_ORIGIN = "origin"
+CONF_DESTINATION_LATITUDE = "destination_latitude"
+CONF_DESTINATION_LONGITUDE = "destination_longitude"
+CONF_DESTINATION_ENTITY_ID = "destination_entity_id"
+CONF_ORIGIN_LATITUDE = "origin_latitude"
+CONF_ORIGIN_LONGITUDE = "origin_longitude"
+CONF_ORIGIN_ENTITY_ID = "origin_entity_id"
 CONF_APP_ID = "app_id"
 CONF_APP_CODE = "app_code"
 CONF_TRAFFIC_MODE = "traffic_mode"
@@ -74,7 +77,7 @@ ATTR_ROUTE = "route"
 ATTR_ORIGIN = "origin"
 ATTR_DESTINATION = "destination"
 
-ATTR_DURATION_WITHOUT_TRAFFIC = "duration_without_traffic"
+ATTR_DURATION_IN_TRAFFIC = "duration_in_traffic"
 ATTR_ORIGIN_NAME = "origin_name"
 ATTR_DESTINATION_NAME = "destination_name"
 
@@ -88,18 +91,41 @@ DATA_KEY = "here_travel_time"
 NO_ROUTE_ERRORS = ["NGEO_ERROR_GRAPH_DISCONNECTED", "NGEO_ERROR_ROUTE_NO_END_POINT"]
 NO_ROUTE_ERROR_MESSAGE = "HERE could not find a route based on the input"
 
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
+COORDINATE_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_APP_ID): cv.string,
-        vol.Required(CONF_APP_CODE): cv.string,
-        vol.Required(CONF_DESTINATION): cv.string,
-        vol.Required(CONF_ORIGIN): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_MODE, default=TRAVEL_MODE_CAR): vol.In(TRAVEL_MODE),
-        vol.Optional(CONF_ROUTE_MODE, default=ROUTE_MODE_FASTEST): vol.In(ROUTE_MODE),
-        vol.Optional(CONF_TRAFFIC_MODE, default=False): cv.boolean,
-        vol.Optional(CONF_UNIT_SYSTEM): vol.In(UNITS),
+        vol.Inclusive(CONF_DESTINATION_LATITUDE, "coordinates"): cv.latitude,
+        vol.Inclusive(CONF_DESTINATION_LONGITUDE, "coordinates"): cv.longitude,
     }
+)
+
+PLATFORM_SCHEMA = vol.All(
+    cv.has_at_least_one_key(CONF_DESTINATION_LATITUDE, CONF_DESTINATION_ENTITY_ID),
+    cv.has_at_least_one_key(CONF_ORIGIN_LATITUDE, CONF_ORIGIN_ENTITY_ID),
+    PLATFORM_SCHEMA.extend(
+        {
+            vol.Required(CONF_APP_ID): cv.string,
+            vol.Required(CONF_APP_CODE): cv.string,
+            vol.Inclusive(
+                CONF_DESTINATION_LATITUDE, "destination_coordinates"
+            ): cv.latitude,
+            vol.Inclusive(
+                CONF_DESTINATION_LONGITUDE, "destination_coordinates"
+            ): cv.longitude,
+            vol.Exclusive(CONF_DESTINATION_LATITUDE, "destination"): cv.latitude,
+            vol.Exclusive(CONF_DESTINATION_ENTITY_ID, "destination"): cv.entity_id,
+            vol.Inclusive(CONF_ORIGIN_LATITUDE, "origin_coordinates"): cv.latitude,
+            vol.Inclusive(CONF_ORIGIN_LONGITUDE, "origin_coordinates"): cv.longitude,
+            vol.Exclusive(CONF_ORIGIN_LATITUDE, "origin"): cv.latitude,
+            vol.Exclusive(CONF_ORIGIN_ENTITY_ID, "origin"): cv.entity_id,
+            vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+            vol.Optional(CONF_MODE, default=TRAVEL_MODE_CAR): vol.In(TRAVEL_MODE),
+            vol.Optional(CONF_ROUTE_MODE, default=ROUTE_MODE_FASTEST): vol.In(
+                ROUTE_MODE
+            ),
+            vol.Optional(CONF_TRAFFIC_MODE, default=False): cv.boolean,
+            vol.Optional(CONF_UNIT_SYSTEM): vol.In(UNITS),
+        }
+    ),
 )
 
 
@@ -114,8 +140,22 @@ async def async_setup_platform(
 
     app_id = config[CONF_APP_ID]
     app_code = config[CONF_APP_CODE]
-    origin = config[CONF_ORIGIN]
-    destination = config[CONF_DESTINATION]
+    if config.get(CONF_ORIGIN_LATITUDE) is not None:
+        origin = ",".join(
+            [str(config[CONF_ORIGIN_LATITUDE]), str(config[CONF_ORIGIN_LONGITUDE])]
+        )
+    else:
+        origin = config[CONF_ORIGIN_ENTITY_ID]
+
+    if config.get(CONF_DESTINATION_LATITUDE) is not None:
+        destination = ",".join(
+            [
+                str(config[CONF_DESTINATION_LATITUDE]),
+                str(config[CONF_DESTINATION_LONGITUDE]),
+            ]
+        )
+    else:
+        destination = config[CONF_DESTINATION_ENTITY_ID]
 
     travel_mode = config.get(CONF_MODE)
     traffic_mode = config.get(CONF_TRAFFIC_MODE)
@@ -165,10 +205,13 @@ class HERETravelTimeSensor(Entity):
             self._here_data.destination = destination
 
     @property
-    def state(self) -> Optional[int]:
+    def state(self) -> Optional[str]:
         """Return the state of the sensor."""
-        if self._here_data.duration is not None:
-            return round(self._here_data.duration / 60)
+        if self._here_data.traffic_mode:
+            if self._here_data.traffic_time is not None:
+                return str(round(self._here_data.traffic_time / 60))
+        if self._here_data.base_time is not None:
+            return str(round(self._here_data.base_time / 60))
 
         return None
 
@@ -182,16 +225,16 @@ class HERETravelTimeSensor(Entity):
         self
     ) -> Optional[Dict[str, Union[None, float, str, bool]]]:
         """Return the state attributes."""
-        if self._here_data.duration is None:
+        if self._here_data.base_time is None:
             return None
 
         res = {}
         res[ATTR_ATTRIBUTION] = self._here_data.attribution
-        res[ATTR_DURATION] = self._here_data.duration / 60
+        res[ATTR_DURATION] = self._here_data.base_time / 60
         res[ATTR_DISTANCE] = self._here_data.distance
         res[ATTR_ROUTE] = self._here_data.route
         res[CONF_UNIT_SYSTEM] = self._here_data.units
-        res[ATTR_DURATION_WITHOUT_TRAFFIC] = self._here_data.base_time / 60
+        res[ATTR_DURATION_IN_TRAFFIC] = self._here_data.traffic_time / 60
         res[ATTR_ORIGIN] = self._here_data.origin
         res[ATTR_DESTINATION] = self._here_data.destination
         res[ATTR_ORIGIN_NAME] = self._here_data.origin_name
@@ -231,11 +274,6 @@ class HERETravelTimeSensor(Entity):
                 self._destination_entity_id
             )
 
-        self._here_data.destination = await self._resolve_zone(
-            self._here_data.destination
-        )
-        self._here_data.origin = await self._resolve_zone(self._here_data.origin)
-
         await self._hass.async_add_executor_job(self._here_data.update)
 
     async def _get_location_from_entity(self, entity_id: str) -> Optional[str]:
@@ -268,15 +306,6 @@ class HERETravelTimeSensor(Entity):
         attr = entity.attributes
         return "{},{}".format(attr.get(ATTR_LATITUDE), attr.get(ATTR_LONGITUDE))
 
-    async def _resolve_zone(self, friendly_name: str) -> str:
-        """Get the lat/long string of a zone given its friendly_name."""
-        entities = self._hass.states.async_all()
-        for entity in entities:
-            if entity.domain == "zone" and entity.name == friendly_name:
-                return self._get_location_from_attributes(entity)
-
-        return friendly_name
-
 
 class HERETravelTimeData:
     """HERETravelTime data object."""
@@ -299,7 +328,7 @@ class HERETravelTimeData:
         self.traffic_mode = traffic_mode
         self.route_mode = route_mode
         self.attribution = None
-        self.duration = None
+        self.traffic_time = None
         self.distance = None
         self.route = None
         self.base_time = None
@@ -308,7 +337,7 @@ class HERETravelTimeData:
         self.units = units
         self._client = herepy.RoutingApi(app_id, app_code)
 
-    def update(self):
+    def update(self) -> None:
         """Get the latest data from HERE."""
         if self.traffic_mode:
             traffic_mode = TRAFFIC_MODE_ENABLED
@@ -316,19 +345,18 @@ class HERETravelTimeData:
             traffic_mode = TRAFFIC_MODE_DISABLED
 
         if self.destination is not None and self.origin is not None:
-            # Check for correct pattern
-            pattern = r"-?\d{1,2}\.\d+,-?\d{1,3}\.\d+"
-            if not re.fullmatch(pattern, self.origin):
-                _LOGGER.error("Origin has the wrong format: %s", self.origin)
-                return
-            if not re.fullmatch(pattern, self.destination):
-                _LOGGER.error("Destination has the wrong format: %s", self.destination)
-                return
-
             # Convert location to HERE friendly location
             destination = self.destination.split(",")
             origin = self.origin.split(",")
 
+            _LOGGER.debug(
+                "Requesting route for origin: %s, destination: %s, route_mode: %s, mode: %s, traffic_mode: %s",
+                origin,
+                destination,
+                self.route_mode,
+                self.travel_mode,
+                traffic_mode,
+            )
             response = self._client.car_route(
                 origin, destination, [self.route_mode, self.travel_mode, traffic_mode]
             )
@@ -348,7 +376,10 @@ class HERETravelTimeData:
 
             self.attribution = None
             self.base_time = summary["baseTime"]
-            self.duration = summary["travelTime"]
+            if self.travel_mode in TRAVEL_MODES_VEHICLE:
+                self.traffic_time = summary["trafficTime"]
+            else:
+                self.traffic_time = self.base_time
             distance = summary["distance"]
             if self.units == CONF_UNIT_SYSTEM_IMPERIAL:
                 # Convert to miles.
@@ -372,9 +403,9 @@ class HERETravelTimeData:
             self.destination_name = waypoint[1]["mappedRoadName"]
 
     @staticmethod
-    def _get_route_from_non_vehicle_maneuver(maneuver):
+    def _get_route_from_non_vehicle_maneuver(maneuver: str) -> str:
         """Extract a Waze-like route from the maneuver instructions."""
-        road_names = []
+        road_names: List[str] = []
 
         for step in maneuver:
             instruction = step["instruction"]
@@ -393,9 +424,11 @@ class HERETravelTimeData:
         return route
 
     @staticmethod
-    def _get_route_from_public_transport_line(public_transport_line_segment):
+    def _get_route_from_public_transport_line(
+        public_transport_line_segment: str
+    ) -> str:
         """Extract Waze-like route info from the public transport lines."""
-        lines = []
+        lines: List[str] = []
         for line_info in public_transport_line_segment:
             lines.append(line_info["lineName"] + " - " + line_info["destination"])
 
@@ -403,9 +436,9 @@ class HERETravelTimeData:
         return route
 
     @staticmethod
-    def _get_route_from_vehicle_maneuver(maneuver):
+    def _get_route_from_vehicle_maneuver(maneuver: str) -> str:
         """Extract a Waze-like route from the maneuver instructions."""
-        road_names = []
+        road_names: List[str] = []
 
         for step in maneuver:
             instruction = step["instruction"]

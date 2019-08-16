@@ -3,11 +3,19 @@
 ---
 {% endif %}
 
-{% if installed %}
+{% if installed and version_installed != selected_tag %}
 # Changes as compared to your installed version:
 
 ## Breaking Changes
 
+{% if version_installed.replace("v", "").replace(".","") | int < 200  %}
+- Referencing a zone by its friendly name is no longer supported. You can still use its entity_id e.g. `zone.home`
+- `origin` is replaced by `origin_latitude` and `origin_longitude` when using coordinates or `origin_entity_id` when using `device_tracker`, `zone`, `sensor` and `person`. See the updated configuration instructions for more details.
+- `destination` is replaced by `destination_latitude` and `destination_longitude` when using coordinates or `destination_entity_id` when using `device_tracker`, `zone`, `sensor` and `person`. See the updated configuration instructions for more details.
+- The attribute `duration` now always returns the value of travel time _without_ traffic
+- The attribute `duration_without_traffic` is removed
+- The attribute `duration_in_traffic` was added to be more in sync with the `google_travel_time` component
+{% endif %}
 ## Changes
 
 ## Features
@@ -27,14 +35,6 @@
 {% endif %}
 ---
 {% endif %}
-
-# Important information for hass.io users on > 0.96.0
-
-If you are using hass.io in a version later than 0.96.0 you have to restart twice in order for this component to work.
-
-This is a known problem for some custom_components and will hopefully be fixed soon
-
----
 
 # here_travel_time
 
@@ -76,8 +76,10 @@ sensor:
   - platform: here_travel_time
     app_id: "YOUR_APP_ID"
     app_code: "YOUR_APP_CODE"
-    origin: "51.222975,9.267577"
-    destination: "51.257430,9.335892"
+    origin_latitude: "51.222975"
+    origin_longitude: "9.267577"
+    destination_latitude: "51.257430"
+    destination_longitude: "9.335892"
 ```
 
 ## Configuration options
@@ -86,8 +88,12 @@ Key | Type | Required | Description
 -- | -- | -- | --
 `app_id` | `string` | `true` | Your application's API id (get one by following the instructions above).
 `app_code` | `string` | `true` | Your application's API code (get one by following the instructions above).
-`origin` | `string` | `true` | The starting point for calculating travel distance and time.
-`destination` | `string` | `true` | The finishing point for calculating travel distance and time.
+`origin_latitude` | `string` | `true` | The starting latitude for calculating travel distance and time. Must be used in combination with origin_longitude. Cannot be used in combination with origin_entity_id
+`origin_longitude` | `string` | `true` | The starting longitude for calculating travel distance and time. Must be used in combination with origin_latitude. Cannot be used in combination with origin_entity_id
+`destination_latitude` | `string` | `true` | The finishing latitude for calculating travel distance and time. Must be used in combination with destination_longitude. Cannot be used in combination with destination_entity_id
+`destination_longitude` | `string` | `true` | The finishing longitude for calculating travel distance and time. Must be used in combination with destination_latitude. Cannot be used in combination with destination_entity_id
+`origin_entity_id` | `string` | `true` | The entity_id holding the starting point for calculating travel distance and time. Cannot be used in combination with origin_latitude / origin_longitude
+`destination_entity_id` | `string` | `true` | The entity_id holding the finishing point for calculating travel distance and time. Cannot be used in combination with destination_latitude / destination_longitude
 `name` | `string` | `false` | A name to display on the sensor. The default is "HERE Travel Time".
 `mode` | `string` | `false` | You can choose between: `bicycle`, `car`, `pedestrian`, `publicTransport`, `publicTransportTimeTable` or `truck`. The default is `car`. For public transport publicTransportTimetable is recommended. You can find more information on the modes [here](https://developer.here.com/documentation/routing/topics/transport-modes.html) and on the public modes [here](https://developer.here.com/documentation/routing/topics/public-transport-routing.html)
 `route_mode` | `string` | `false` | You can choose between: `fastest`, or `shortest`. This will determine whether the route is optimized to be the shortest and completely disregard traffic and speed limits or the fastest route according to the current traffic information. The default is `fastest`
@@ -108,16 +114,8 @@ sensor:
     app_id: "YOUR_APP_ID"
     app_code: "YOUR_APP_CODE"
     name: Phone To Home
-    origin: device_tracker.mobile_phone
-    destination: zone.home
-
-  # Tracking entity to zone friendly name
-  - platform: here_travel_time
-    app_id: "YOUR_APP_ID"
-    app_code: "YOUR_APP_CODE"
-    name: Home To Eddie's House
-    origin: zone.home
-    destination: Eddies House    # Friendly name of a zone
+    origin_entity_id: device_tracker.mobile_phone
+    destination_entity_id: zone.home
 ```
 
 ## Entity Tracking 
@@ -127,9 +125,8 @@ sensor:
   - If the state is not a zone, it will look for the longitude and latitude attributes
 - **zone**
   - Uses the longitude and latitude attributes
-  - Can also be referenced by just the zone's friendly name found in the attributes.
 - **sensor**
-  - If the state is a zone or zone friendly name, then will use the zone location
+  - If the state is a zone, then will use the zone location
   - All other states will be passed directly into the HERE API
     - This includes all valid locations listed in the *Configuration Variables*
 
