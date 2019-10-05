@@ -33,6 +33,9 @@
 
 ## Bugfixes
 
+{% if version_installed.replace("v", "").replace(".","") | int < 211  %}
+- Fix error ATTR_MODE not found
+{% endif %}
 {% if version_installed.replace("v", "").replace(".","") | int < 143  %}
 - Fix for `mode: publicTransportTimeTable` returning `No timetable route found`
 {% endif %}
