@@ -21,7 +21,7 @@
 ## Features
 
 {% if version_installed.replace("v", "").replace(".","") | int < 210  %}
-- `origin_entity_id` and `destination_entity_id` can be any entity with a state of another entity id or the coordinates themselves
+- `origin_entity_id` and `destination_entity_id` can be any entity with its state being another entity_id or the coordinates themselves
 {% endif %}
 {% if version_installed.replace("v", "").replace(".","") | int < 141  %}
 - Added `mode: bicycle`
