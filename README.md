@@ -95,7 +95,8 @@ Key | Type | Required | Description
 
 ## Dynamic Configuration 
 
-Tracking can be set up to track entities of type `device_tracker`, `zone`, `sensor` and `person`. If an entity is placed in the origin or destination then every 5 minutes when the platform updates it will use the latest location of that entity.
+If an entity is placed in the `origin_entity_id` or `destination_entity_id` then every 5 minutes when the platform updates it will use the latest location of that entity.
+
 
 ```yaml
 # Example entry for configuration.yaml
@@ -116,10 +117,8 @@ sensor:
   - If the state is not a zone, it will look for the longitude and latitude attributes
 - **zone**
   - Uses the longitude and latitude attributes
-- **sensor**
-  - If the state is a zone, then will use the zone location
-  - All other states will be passed directly into the HERE API
-    - This includes all valid locations listed in the *Configuration Variables*
+- **other**
+  - Will try to recursively resolve the state if it is an entity id until it finds coordinates
 
 ##  Updating sensors on-demand using Automation 
 
